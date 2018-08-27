@@ -1,21 +1,34 @@
 from django.contrib.auth.models import User
-from lookup.serializers import UserSerializer, LookUpSerializer
-from rest_framework import viewsets
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import ensure_csrf_cookie
 from .models import LookUp
 
-
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    A simple ViewSet for listing or retrieving users.
-    """
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+from django.http import JsonResponse, HttpResponse
+from django.core import serializers
 
 
-class LookUpViewSet(viewsets.ModelViewSet):
-    """
-    LookUp view set to create, retrieve, update and delete the lookup
-    object.
-    """
-    queryset = LookUp.objects.all()
-    serializer_class = LookUpSerializer
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def url_lookup(request, **kwargs):
+    if request.method == 'GET':
+        domain = kwargs.get('domain', None)
+        path = kwargs.get('path', None)
+        if domain:
+            if len(LookUp.objects.filter(url=domain)) > 0:
+                return JsonResponse({'safe': False})
+            elif len(LookUp.objects.filter(url=domain+"/"+str(path))) > 0:
+                return JsonResponse({'safe': False})
+            else:
+                return JsonResponse({'safe': True})
+        else:
+            res = list(LookUp.objects.all().values())
+            return JsonResponse(res, safe=False)
+
+    if request.method == 'POST':
+        domain = kwargs.get('domain', None)
+        path = kwargs.get('path', '')
+        if domain:
+            res = LookUp.objects.create(url=domain+"/"+str(path))
+            if res:
+                return JsonResponse({'result': 'success'}, safe=False)

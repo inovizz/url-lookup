@@ -1,13 +1,15 @@
-from django.conf.urls import url, include
-from rest_framework.routers import DefaultRouter
 from lookup import views
+from django.urls import re_path
 
 app_name = 'lookup'
 
-router = DefaultRouter()
-router.register(r'urlinfo/v1', views.LookUpViewSet, 'lookup')
-router.register(r'user', views.UserViewSet, 'user')
-
 urlpatterns = [
-    url(r'^', include(router.urls))
+    re_path(
+        r'^urlinfo/v1/(?P<domain>http[s]?:\/\/[\w$-*_@.&+!(\),?:%]+)/'
+        r'(?P<path>[\w\/$-*_@.&+!(\),?:%"\'=]+)/$',
+        views.url_lookup, name='url'),
+    re_path(
+        r'^urlinfo/v1/(?P<domain>http[s]?:\/\/[\w$-*_@.&+!(\),?:%]+)/$',
+        views.url_lookup, name='url'),
+    re_path(r'^urlinfo/v1/$', views.url_lookup, name='url')
 ]
