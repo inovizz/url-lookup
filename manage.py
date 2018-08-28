@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+"""Manage.py file for url_lookup."""
 import os
 import sys
 

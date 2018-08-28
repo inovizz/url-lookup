@@ -1,0 +1,6 @@
+[MASTER]
+
+# Add <file or directory> to the black list. It should be a base name, not a
+# path. You may set this option multiple times.
+ignore=migrations, Pipfile, Pipfile.lock, README.md
+disable=inconsistent-return-statements, invalid-name, len-as-condition

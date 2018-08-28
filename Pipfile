@@ -8,6 +8,9 @@ django = "*"
 djangorestframework = "*"
 mysqlclient = "*"
 pylint = "*"
+django-redis = "*"
+uwsgi = "*"
+pylint-django = "*"
 
 [dev-packages]
 "pep8" = "*"
